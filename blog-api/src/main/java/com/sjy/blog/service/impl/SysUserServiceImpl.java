@@ -56,4 +56,16 @@ public class SysUserServiceImpl implements SysUserService {
         return R.success(loginUserVo);
     }
 
+    @Override
+    public void save(SysUser user) {
+        sysUserMapper.insert(user);
+    }
+
+    @Override
+    public SysUser findUserByAccount(String account) {
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getAccount, account).last("limit 1");
+        return sysUserMapper.selectOne(queryWrapper);
+    }
+
 }

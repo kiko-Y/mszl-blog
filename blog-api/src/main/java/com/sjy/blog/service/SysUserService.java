@@ -12,6 +12,8 @@ public interface SysUserService {
 
     SysUser findUserByAccountAndPassword(String account, String password);
 
-
+    SysUser findUserByAccount(String account);
     R findUserByToken(String token);
+
+    void save(SysUser user);
 }

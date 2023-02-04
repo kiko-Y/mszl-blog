@@ -1,5 +1,7 @@
 package com.sjy.blog.dao.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -9,6 +11,8 @@ import lombok.Data;
 @Data
 public class SysUser {
 
+    // 雪花算法
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     private String account;
