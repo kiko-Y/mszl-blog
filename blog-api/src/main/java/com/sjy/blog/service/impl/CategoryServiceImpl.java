@@ -1,5 +1,6 @@
 package com.sjy.blog.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjy.blog.dao.mapper.CategoryMapper;
 import com.sjy.blog.dao.pojo.Category;
 import com.sjy.blog.service.CategoryService;
@@ -29,6 +30,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public R listAllCategories() {
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Category::getId, Category::getCategoryName);
+        List<Category> categories = categoryMapper.selectList(queryWrapper);
+        return R.success(convertList(categories));
+    }
+
+    @Override
+    public R listAllCategoriesDetail() {
         List<Category> categories = categoryMapper.selectList(null);
         return R.success(convertList(categories));
     }

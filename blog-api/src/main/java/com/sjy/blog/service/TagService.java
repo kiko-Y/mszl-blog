@@ -15,4 +15,6 @@ public interface TagService {
     R findHotTags(int limit);
 
     R listAllTags();
+
+    R listAllTagsDetail();
 }

@@ -28,4 +28,9 @@ public class TagController {
     public R listAllTags() {
         return tagService.listAllTags();
     }
+
+    @GetMapping("/detail")
+    public R listAllTagsDetail() {
+        return tagService.listAllTagsDetail();
+    }
 }

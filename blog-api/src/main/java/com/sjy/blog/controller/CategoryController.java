@@ -22,4 +22,9 @@ public class CategoryController {
     public R listAllCategories() {
         return categoryService.listAllCategories();
     }
+
+    @GetMapping("/detail")
+    public R listAllCategoriesDetail() {
+        return categoryService.listAllCategoriesDetail();
+    }
 }

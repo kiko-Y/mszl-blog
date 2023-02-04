@@ -49,6 +49,14 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public R listAllTags() {
+        LambdaQueryWrapper<Tag> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Tag::getId, Tag::getTagName);
+        List<Tag> tagList = tagMapper.selectList(queryWrapper);
+        return R.success(convertList(tagList));
+    }
+
+    @Override
+    public R listAllTagsDetail() {
         List<Tag> tagList = tagMapper.selectList(null);
         return R.success(convertList(tagList));
     }
