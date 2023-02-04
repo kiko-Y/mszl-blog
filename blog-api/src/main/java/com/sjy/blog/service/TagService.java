@@ -17,4 +17,6 @@ public interface TagService {
     R listAllTags();
 
     R listAllTagsDetail();
+
+    R getTagDetailById(Long tagId);
 }

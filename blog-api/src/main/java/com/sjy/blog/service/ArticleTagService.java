@@ -1,6 +1,9 @@
 package com.sjy.blog.service;
 
+import com.sjy.blog.dao.pojo.Article;
 import com.sjy.blog.dao.pojo.ArticleTag;
+
+import java.util.List;
 
 /**
  * @author: Kiko
@@ -8,4 +11,6 @@ import com.sjy.blog.dao.pojo.ArticleTag;
  */
 public interface ArticleTagService {
     void save(ArticleTag articleTag);
+
+    List<ArticleTag> getArticleIdListByTagId(Long tagId);
 }

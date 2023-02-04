@@ -69,6 +69,17 @@ public class ArticleServiceImpl implements ArticleService {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByDesc(Article::getCreateDate, Article::getWeight)
                 .eq(pageParam.getCategoryId() != null, Article::getCategoryId, pageParam.getCategoryId());
+        if(pageParam.getTagId() != null) {
+            Long tagId = pageParam.getTagId();
+
+            List<ArticleTag> articleTagList = articleTagService.getArticleIdListByTagId(tagId);
+            List<Long> articleIdList = new ArrayList<>();
+            for (ArticleTag articleTag : articleTagList) {
+                articleIdList.add(articleTag.getArticleId());
+            }
+            queryWrapper.in(Article::getId, articleIdList);
+        }
+
         Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
         List<Article> articleList = articlePage.getRecords();
         List<ArticleVo> articleVoList = convertList(articleList, true, true, false, false);

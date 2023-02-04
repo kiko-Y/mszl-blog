@@ -61,6 +61,15 @@ public class TagServiceImpl implements TagService {
         return R.success(convertList(tagList));
     }
 
+    @Override
+    public R getTagDetailById(Long tagId) {
+        LambdaQueryWrapper<Tag> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Tag::getId, tagId)
+                .last("limit 1");
+        Tag tag = tagMapper.selectOne(queryWrapper);
+        return R.success(convert(tag));
+    }
+
     private TagVo convert(Tag tag) {
         TagVo tagVo = new TagVo();
         BeanUtils.copyProperties(tag, tagVo);

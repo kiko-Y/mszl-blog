@@ -1,10 +1,14 @@
 package com.sjy.blog.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjy.blog.dao.mapper.ArticleTagMapper;
+import com.sjy.blog.dao.pojo.Article;
 import com.sjy.blog.dao.pojo.ArticleTag;
 import com.sjy.blog.service.ArticleTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author: Kiko
@@ -18,5 +22,13 @@ public class ArticleTagServiceImpl implements ArticleTagService {
     @Override
     public void save(ArticleTag articleTag) {
         articleTagMapper.insert(articleTag);
+    }
+
+    @Override
+    public List<ArticleTag> getArticleIdListByTagId(Long tagId) {
+        LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(ArticleTag::getArticleId)
+                        .eq(ArticleTag::getTagId, tagId);
+        return articleTagMapper.selectList(queryWrapper);
     }
 }
