@@ -1,6 +1,7 @@
 package com.sjy.blog.service;
 
 import com.sjy.blog.dao.pojo.Category;
+import com.sjy.blog.vo.R;
 
 /**
  * @author: Kiko
@@ -8,4 +9,6 @@ import com.sjy.blog.dao.pojo.Category;
  */
 public interface CategoryService {
     Category findCategoryById(Long id);
+
+    R listAllCategories();
 }
