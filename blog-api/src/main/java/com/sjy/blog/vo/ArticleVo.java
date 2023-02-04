@@ -33,6 +33,6 @@ public class ArticleVo {
 
     private List<TagVo> tags;
 
-    private List<CategoryVo> categories;
+    private CategoryVo category;
 
 }

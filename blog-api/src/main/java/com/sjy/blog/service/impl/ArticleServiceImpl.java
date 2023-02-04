@@ -4,16 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sjy.blog.dao.dos.Archive;
 import com.sjy.blog.dao.mapper.ArchiveMapper;
+import com.sjy.blog.dao.mapper.ArticleBodyMapper;
 import com.sjy.blog.dao.mapper.ArticleMapper;
 import com.sjy.blog.dao.pojo.Article;
+import com.sjy.blog.dao.pojo.ArticleBody;
+import com.sjy.blog.dao.pojo.Category;
 import com.sjy.blog.dao.pojo.SysUser;
 import com.sjy.blog.service.ArticleService;
+import com.sjy.blog.service.CategoryService;
 import com.sjy.blog.service.SysUserService;
 import com.sjy.blog.service.TagService;
-import com.sjy.blog.vo.ArchiveVo;
-import com.sjy.blog.vo.ArticleVo;
-import com.sjy.blog.vo.R;
-import com.sjy.blog.vo.TagVo;
+import com.sjy.blog.vo.*;
 import com.sjy.blog.vo.params.PageParam;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +44,12 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArchiveMapper archiveMapper;
 
+    @Autowired
+    private ArticleBodyMapper articleBodyMapper;
+
+    @Autowired
+    private CategoryService categoryService;
+
 
     /**
      * 获取首页所有文章信息
@@ -57,7 +64,7 @@ public class ArticleServiceImpl implements ArticleService {
         queryWrapper.orderByDesc(Article::getCreateDate, Article::getWeight);
         Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
         List<Article> articleList = articlePage.getRecords();
-        List<ArticleVo> articleVoList = convertList(articleList, true, true, false);
+        List<ArticleVo> articleVoList = convertList(articleList, true, true, false, false);
         return R.success(articleVoList);
     }
 
@@ -68,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public R findHotArticles(int limit) {
         List<Article> articleList = articleMapper.findHotArticles(limit);
-        return R.success(convertList(articleList, false, false, false));
+        return R.success(convertList(articleList, false, false, false, false));
     }
 
     /**
@@ -83,7 +90,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .select(Article::getId, Article::getTitle)
                 .last(" limit " + limit);
         List<Article> articleList = articleMapper.selectList(queryWrapper);
-        return R.success(convertList(articleList, false, false, false));
+        return R.success(convertList(articleList, false, false, false, false));
     }
 
     /**
@@ -94,6 +101,18 @@ public class ArticleServiceImpl implements ArticleService {
     public R listArchives() {
         List<Archive> archiveList = archiveMapper.listArchives();
         return R.success(convertList(archiveList));
+    }
+
+    /**
+     * 查看文章详情
+     * @param id
+     * @return
+     */
+    @Override
+    public R findArticleById(Long id) {
+        Article article = articleMapper.selectById(id);
+        ArticleVo articleVo = convert(article, true, true, true, true);
+        return R.success(articleVo);
     }
 
     private ArchiveVo convert(Archive archive) {
@@ -112,7 +131,13 @@ public class ArticleServiceImpl implements ArticleService {
         return archiveVoList;
     }
 
-    private ArticleVo convert (Article article, boolean needTags, boolean needAuthor, boolean needBody) {
+    private ArticleBodyVo convert(ArticleBody articleBody) {
+        ArticleBodyVo articleBodyVo = new ArticleBodyVo();
+        BeanUtils.copyProperties(articleBody, articleBodyVo);
+        return articleBodyVo;
+    }
+
+    private ArticleVo convert (Article article, boolean needTags, boolean needAuthor, boolean needBody, boolean needCategory) {
         ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article, articleVo);
         if(Objects.nonNull(article.getCreateDate())) {
@@ -132,17 +157,30 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         if(needBody) {
-
+            Long articleId = article.getId();
+            LambdaQueryWrapper<ArticleBody> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(ArticleBody::getArticleId, articleId);
+            ArticleBody articleBody = articleBodyMapper.selectOne(queryWrapper);
+            ArticleBodyVo articleBodyVo = convert(articleBody);
+            articleVo.setBody(articleBodyVo);
+        }
+        if(needCategory) {
+            Long categoryId = article.getCategoryId();
+            Category category = categoryService.findCategoryById(categoryId);
+            CategoryVo categoryVo = new CategoryVo();
+            BeanUtils.copyProperties(category, categoryVo);
+            articleVo.setCategory(categoryVo);
         }
         return articleVo;
     }
 
     private List<ArticleVo> convertList(List<Article> articleList,
-                                        boolean needTags, boolean needAuthor, boolean needBody) {
+                                        boolean needTags, boolean needAuthor,
+                                        boolean needBody, boolean needCategory) {
         List<ArticleVo> articleVoList = new ArrayList<>();
         if(articleList != null && !articleList.isEmpty()) {
             for (Article article : articleList) {
-                articleVoList.add(convert(article, needTags, needAuthor, needBody));
+                articleVoList.add(convert(article, needTags, needAuthor, needBody, needTags));
             }
         }
         return articleVoList;

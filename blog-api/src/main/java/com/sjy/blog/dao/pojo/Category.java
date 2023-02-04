@@ -1,13 +1,14 @@
-package com.sjy.blog.vo;
+package com.sjy.blog.dao.pojo;
 
 import lombok.Data;
 
 /**
  * @author: Kiko
- * @date: 2023/2/3 14:55
+ * @date: 2023/2/4 15:12
  */
 @Data
-public class CategoryVo {
+public class Category {
+
     private Long id;
 
     private String avatar;

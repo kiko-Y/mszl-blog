@@ -4,10 +4,7 @@ import com.sjy.blog.service.ArticleService;
 import com.sjy.blog.vo.R;
 import com.sjy.blog.vo.params.PageParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author: Kiko
@@ -47,4 +44,10 @@ public class ArticleController {
     public R listArchives() {
         return articleService.listArchives();
     }
+
+    @PostMapping("/view/{id}")
+    public R articleDetail(@PathVariable("id") Long id) {
+        return articleService.findArticleById(id);
+    }
+
 }

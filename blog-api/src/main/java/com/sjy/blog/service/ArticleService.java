@@ -15,4 +15,6 @@ public interface ArticleService {
     R findNewArticles(int limit);
 
     R listArchives();
+
+    R findArticleById(Long id);
 }
