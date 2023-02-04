@@ -119,6 +119,15 @@ public class ArticleServiceImpl implements ArticleService {
         return R.success(articleVo);
     }
 
+    @Override
+    public Long getAuthorIdByArticleId(Long articleId) {
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Article::getId, articleId)
+                .select(Article::getAuthorId)
+                .last("limit 1");
+        return articleMapper.selectOne(queryWrapper).getAuthorId();
+    }
+
     private ArchiveVo convert(Archive archive) {
         ArchiveVo archiveVo = new ArchiveVo();
         BeanUtils.copyProperties(archive, archiveVo);

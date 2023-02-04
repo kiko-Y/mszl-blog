@@ -2,11 +2,9 @@ package com.sjy.blog.controller;
 
 import com.sjy.blog.service.CommentService;
 import com.sjy.blog.vo.R;
+import com.sjy.blog.vo.params.CommentParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author: Kiko
@@ -22,5 +20,10 @@ public class CommentController {
     @GetMapping("/article/{id}")
     public R listComments(@PathVariable("id") Long articleId) {
         return commentService.listCommentsByArticleId(articleId);
+    }
+
+    @PostMapping("/create/change")
+    public R comment(@RequestBody CommentParam commentParam) {
+        return commentService.addComment(commentParam);
     }
 }

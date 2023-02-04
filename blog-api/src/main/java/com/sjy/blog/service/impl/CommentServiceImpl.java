@@ -4,11 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sjy.blog.dao.mapper.CommentMapper;
 import com.sjy.blog.dao.pojo.Comment;
 import com.sjy.blog.dao.pojo.SysUser;
+import com.sjy.blog.service.ArticleService;
 import com.sjy.blog.service.CommentService;
 import com.sjy.blog.service.SysUserService;
+import com.sjy.blog.utils.UserThreadLocal;
 import com.sjy.blog.vo.CommentVo;
 import com.sjy.blog.vo.R;
 import com.sjy.blog.vo.UserVo;
+import com.sjy.blog.vo.params.CommentParam;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import java.util.List;
  * @date: 2023/2/4 17:11
  */
 @Service
+@Slf4j
 public class CommentServiceImpl implements CommentService {
 
     @Autowired
@@ -29,6 +34,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private SysUserService sysUserService;
+
+    @Autowired
+    private ArticleService articleService;
 
     @Override
     public R listCommentsByArticleId(Long articleId) {
@@ -42,6 +50,27 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentMapper.selectList(queryWrapper);
         List<CommentVo> commentVoList = convertList(commentList);
         return R.success(commentVoList);
+    }
+
+    @Override
+    public R addComment(CommentParam commentParam) {
+        SysUser user = UserThreadLocal.get();
+        Long parent = commentParam.getParent();
+        String content = commentParam.getContent();
+        Long toUserId = commentParam.getToUserId();
+        Long articleId = commentParam.getArticleId();
+        log.info("{}", commentParam);
+        Comment comment = new Comment();
+        comment.setId(null);
+        comment.setContent(content);
+        comment.setAuthorId(user.getId());
+        comment.setCreateDate(System.currentTimeMillis());
+        comment.setArticleId(articleId);
+        comment.setParentId(parent == null ? 0 : parent);
+        comment.setToUid(toUserId == null ? 0 : toUserId);
+        comment.setLevel((parent == null || parent == 0) ? 1 : 2);
+        commentMapper.insert(comment);
+        return R.success(null);
     }
 
     private List<CommentVo> convertList(List<Comment> commentList) {

@@ -1,6 +1,7 @@
 package com.sjy.blog.service;
 
 import com.sjy.blog.vo.R;
+import com.sjy.blog.vo.params.CommentParam;
 
 /**
  * @author: Kiko
@@ -8,4 +9,6 @@ import com.sjy.blog.vo.R;
  */
 public interface CommentService {
     R listCommentsByArticleId(Long articleId);
+
+    R addComment(CommentParam commentParam);
 }

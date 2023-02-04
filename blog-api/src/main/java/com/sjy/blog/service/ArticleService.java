@@ -17,4 +17,6 @@ public interface ArticleService {
     R listArchives();
 
     R findArticleById(Long id);
+
+    Long getAuthorIdByArticleId(Long articleId);
 }
