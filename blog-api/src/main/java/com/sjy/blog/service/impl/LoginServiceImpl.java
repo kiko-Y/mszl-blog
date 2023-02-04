@@ -61,7 +61,7 @@ public class LoginServiceImpl implements LoginService {
         if(Objects.isNull(user)) {
             return R.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
-        long expireTime = 10 * 60 * 1000L;
+        long expireTime = 2 * 60 * 60 * 1000L;
         String token = JWTUtils.createToken(user.getId(), expireTime);
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(user), expireTime, TimeUnit.MILLISECONDS);
         return R.success(token);
