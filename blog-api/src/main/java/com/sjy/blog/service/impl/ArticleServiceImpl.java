@@ -10,10 +10,7 @@ import com.sjy.blog.dao.pojo.Article;
 import com.sjy.blog.dao.pojo.ArticleBody;
 import com.sjy.blog.dao.pojo.Category;
 import com.sjy.blog.dao.pojo.SysUser;
-import com.sjy.blog.service.ArticleService;
-import com.sjy.blog.service.CategoryService;
-import com.sjy.blog.service.SysUserService;
-import com.sjy.blog.service.TagService;
+import com.sjy.blog.service.*;
 import com.sjy.blog.vo.*;
 import com.sjy.blog.vo.params.PageParam;
 import org.joda.time.LocalDateTime;
@@ -49,6 +46,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ThreadService threadService;
 
 
     /**
@@ -112,6 +112,10 @@ public class ArticleServiceImpl implements ArticleService {
     public R findArticleById(Long id) {
         Article article = articleMapper.selectById(id);
         ArticleVo articleVo = convert(article, true, true, true, true);
+        // 查看完文章后新增阅读数
+        // 多做了一个更新操作，更新加写锁阻塞其他读操作
+        // 更新增加此次接口的耗时
+        threadService.updateArticleViewCount(article);
         return R.success(articleVo);
     }
 
