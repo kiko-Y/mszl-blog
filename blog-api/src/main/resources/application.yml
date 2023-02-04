@@ -12,6 +12,10 @@ spring:
   redis:
     host: 192.168.80.128
     port: 6379
+  servlet:
+    multipart:
+      max-request-size: 20MB
+      max-file-size: 2MB
 
 mybatis-plus:
   configuration:
@@ -20,3 +24,8 @@ mybatis-plus:
     db-config:
       table-prefix: ms_
   type-aliases-package: com.sjy.blog.dao.pojo, com.sjy.blog.dao.dos
+
+
+qiniu:
+  access-key: "fpsH868To_FTpPn-3gfVEUexGnvwsBcNkVjF8g1E"
+  secret-key: "93bcCiEqAsqiMArsQeUckVuid3X9yfGbghoMN9mr"
