@@ -1,5 +1,6 @@
 package com.sjy.blog.controller;
 
+import com.sjy.blog.common.aop.LogAnnotation;
 import com.sjy.blog.service.ArticleService;
 import com.sjy.blog.vo.R;
 import com.sjy.blog.vo.params.ArticleParam;
@@ -25,6 +26,7 @@ public class ArticleController {
 
 
     @PostMapping
+    @LogAnnotation(module = "文章", operate = "获取文章列表")
     public R listAllArticles(@RequestBody PageParam pageParam) {
         return articleService.listAllArticles(pageParam);
     }
