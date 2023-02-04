@@ -7,10 +7,7 @@ import com.sjy.blog.dao.dos.Archive;
 import com.sjy.blog.dao.mapper.ArchiveMapper;
 import com.sjy.blog.dao.mapper.ArticleBodyMapper;
 import com.sjy.blog.dao.mapper.ArticleMapper;
-import com.sjy.blog.dao.pojo.Article;
-import com.sjy.blog.dao.pojo.ArticleBody;
-import com.sjy.blog.dao.pojo.Category;
-import com.sjy.blog.dao.pojo.SysUser;
+import com.sjy.blog.dao.pojo.*;
 import com.sjy.blog.service.*;
 import com.sjy.blog.utils.UserThreadLocal;
 import com.sjy.blog.vo.*;
@@ -54,6 +51,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ThreadService threadService;
+
+    @Autowired
+    private ArticleTagService articleTagService;
 
 
 
@@ -146,17 +146,29 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleBodyParam articleBodyParam = articleParam.getBody();
         String content = articleBodyParam.getContent();
         String contentHtml = articleBodyParam.getContentHtml();
+
+
         Article article = new Article(null, title, summary, 0, 0, user.getId(),
                 null, categoryId, 0, System.currentTimeMillis());
         articleMapper.insert(article);
+
+
         Long articleId = article.getId();
         ArticleBody articleBody = new ArticleBody(null, content, contentHtml, articleId);
         articleBodyMapper.insert(articleBody);
+
+
         Long articleBodyId = articleBody.getId();
         LambdaUpdateWrapper<Article> updateWrap = new LambdaUpdateWrapper<>();
         updateWrap.eq(Article::getId, articleId)
                         .set(Article::getBodyId, articleBodyId);
         articleMapper.update(null, updateWrap);
+
+        if(tags != null) {
+            for (TagVo tag : tags) {
+                articleTagService.save(new ArticleTag(null, articleId, tag.getId()));
+            }
+        }
 
         ArticleVo articleVo = new ArticleVo();
         articleVo.setId(articleId);
