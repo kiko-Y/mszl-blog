@@ -47,6 +47,12 @@ public class TagServiceImpl implements TagService {
         return R.success(convertList(tagList));
     }
 
+    @Override
+    public R listAllTags() {
+        List<Tag> tagList = tagMapper.selectList(null);
+        return R.success(convertList(tagList));
+    }
+
     private TagVo convert(Tag tag) {
         TagVo tagVo = new TagVo();
         BeanUtils.copyProperties(tag, tagVo);

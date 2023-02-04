@@ -13,4 +13,6 @@ public interface TagService {
     List<TagVo> findTagsByArticleId(Long articleId);
 
     R findHotTags(int limit);
+
+    R listAllTags();
 }

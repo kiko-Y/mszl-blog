@@ -23,4 +23,9 @@ public class TagController {
         int limit = 2;
         return tagService.findHotTags(limit);
     }
+
+    @GetMapping
+    public R listAllTags() {
+        return tagService.listAllTags();
+    }
 }
