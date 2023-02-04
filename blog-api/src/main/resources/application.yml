@@ -1,0 +1,22 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: mszlu_blog
+  datasource:
+    druid:
+      username: root
+      password: 1004535809
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
+  redis:
+    host: 192.168.80.128
+    port: 6379
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      table-prefix: ms_
+  type-aliases-package: com.sjy.blog.dao.pojo, com.sjy.blog.dao.dos
