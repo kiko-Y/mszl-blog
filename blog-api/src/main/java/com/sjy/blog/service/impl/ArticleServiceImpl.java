@@ -67,7 +67,8 @@ public class ArticleServiceImpl implements ArticleService {
     public R listAllArticles(PageParam pageParam) {
         Page<Article> page = new Page<>(pageParam.getPage(), pageParam.getPageSize());
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(Article::getCreateDate, Article::getWeight);
+        queryWrapper.orderByDesc(Article::getCreateDate, Article::getWeight)
+                .eq(pageParam.getCategoryId() != null, Article::getCategoryId, pageParam.getCategoryId());
         Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
         List<Article> articleList = articlePage.getRecords();
         List<ArticleVo> articleVoList = convertList(articleList, true, true, false, false);

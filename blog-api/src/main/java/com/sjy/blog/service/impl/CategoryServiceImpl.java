@@ -42,6 +42,16 @@ public class CategoryServiceImpl implements CategoryService {
         return R.success(convertList(categories));
     }
 
+    @Override
+    public R getCategoryDetailById(Long categoryId) {
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Category::getId, categoryId)
+                .last("limit 1");
+        Category category = categoryMapper.selectOne(queryWrapper);
+        return R.success(convert(category));
+    }
+
+
     private CategoryVo convert(Category category) {
         CategoryVo categoryVo = new CategoryVo();
         BeanUtils.copyProperties(category, categoryVo);

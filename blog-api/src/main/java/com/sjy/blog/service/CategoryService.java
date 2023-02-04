@@ -13,4 +13,6 @@ public interface CategoryService {
     R listAllCategories();
 
     R listAllCategoriesDetail();
+
+    R getCategoryDetailById(Long categoryId);
 }

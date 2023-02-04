@@ -8,7 +8,11 @@ import lombok.Data;
  */
 @Data
 public class PageParam {
-    private int page;
+    private Integer page = 1;
 
-    private int pageSize;
+    private Integer pageSize = 10;
+
+    private Long categoryId;
+
+    private Long tagId;
 }
