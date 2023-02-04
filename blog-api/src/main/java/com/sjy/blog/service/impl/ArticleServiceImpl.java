@@ -56,38 +56,48 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleTagService articleTagService;
 
 
-
     /**
      * 获取首页所有文章信息
+     *
      * @param pageParam
      * @return
      */
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public R listAllArticles(PageParam pageParam) {
+//        Page<Article> page = new Page<>(pageParam.getPage(), pageParam.getPageSize());
+//        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.orderByDesc(Article::getCreateDate, Article::getWeight)
+//                .eq(pageParam.getCategoryId() != null, Article::getCategoryId, pageParam.getCategoryId());
+//        if(pageParam.getTagId() != null) {
+//            Long tagId = pageParam.getTagId();
+//
+//            List<ArticleTag> articleTagList = articleTagService.getArticleIdListByTagId(tagId);
+//            List<Long> articleIdList = new ArrayList<>();
+//            for (ArticleTag articleTag : articleTagList) {
+//                articleIdList.add(articleTag.getArticleId());
+//            }
+//            queryWrapper.in(Article::getId, articleIdList);
+//        }
+//
+//        Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
+//        List<Article> articleList = articlePage.getRecords();
+//        List<ArticleVo> articleVoList = convertList(articleList, true, true, false, false);
+//        return R.success(articleVoList);
+//    }
     @Override
-    @SuppressWarnings("unchecked")
     public R listAllArticles(PageParam pageParam) {
         Page<Article> page = new Page<>(pageParam.getPage(), pageParam.getPageSize());
-        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(Article::getCreateDate, Article::getWeight)
-                .eq(pageParam.getCategoryId() != null, Article::getCategoryId, pageParam.getCategoryId());
-        if(pageParam.getTagId() != null) {
-            Long tagId = pageParam.getTagId();
 
-            List<ArticleTag> articleTagList = articleTagService.getArticleIdListByTagId(tagId);
-            List<Long> articleIdList = new ArrayList<>();
-            for (ArticleTag articleTag : articleTagList) {
-                articleIdList.add(articleTag.getArticleId());
-            }
-            queryWrapper.in(Article::getId, articleIdList);
-        }
-
-        Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
-        List<Article> articleList = articlePage.getRecords();
-        List<ArticleVo> articleVoList = convertList(articleList, true, true, false, false);
-        return R.success(articleVoList);
+        articleMapper.listArticles(page, pageParam.getTagId(), pageParam.getCategoryId(),
+                pageParam.getYear(), pageParam.getMonth());
+        List<Article> records = page.getRecords();
+        return R.success(convertList(records, true, true, false, false));
     }
 
     /**
      * 查询最热文章
+     *
      * @return
      */
     @Override
@@ -98,6 +108,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * 查询最新文章
+     *
      * @param limit
      * @return
      */
@@ -113,6 +124,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * 文章归档
+     *
      * @return
      */
     @Override
@@ -123,6 +135,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * 查看文章详情
+     *
      * @param id
      * @return
      */
@@ -173,10 +186,10 @@ public class ArticleServiceImpl implements ArticleService {
         Long articleBodyId = articleBody.getId();
         LambdaUpdateWrapper<Article> updateWrap = new LambdaUpdateWrapper<>();
         updateWrap.eq(Article::getId, articleId)
-                        .set(Article::getBodyId, articleBodyId);
+                .set(Article::getBodyId, articleBodyId);
         articleMapper.update(null, updateWrap);
 
-        if(tags != null) {
+        if (tags != null) {
             for (TagVo tag : tags) {
                 articleTagService.save(new ArticleTag(null, articleId, tag.getId()));
             }
@@ -195,7 +208,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private List<ArchiveVo> convertList(List<Archive> archiveList) {
         List<ArchiveVo> archiveVoList = new ArrayList<>();
-        if(archiveList != null && !archiveList.isEmpty()) {
+        if (archiveList != null && !archiveList.isEmpty()) {
             for (Archive archive : archiveList) {
                 archiveVoList.add(convert(archive));
             }
@@ -209,14 +222,14 @@ public class ArticleServiceImpl implements ArticleService {
         return articleBodyVo;
     }
 
-    private ArticleVo convert (Article article, boolean needTags, boolean needAuthor, boolean needBody, boolean needCategory) {
+    private ArticleVo convert(Article article, boolean needTags, boolean needAuthor, boolean needBody, boolean needCategory) {
         ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article, articleVo);
-        if(Objects.nonNull(article.getCreateDate())) {
+        if (Objects.nonNull(article.getCreateDate())) {
             articleVo.setCreateDate(new LocalDateTime(article.getCreateDate())
                     .toString("yyyy-MM-dd HH:mm"));
         }
-        if(needTags) {
+        if (needTags) {
             Long articleId = article.getId();
             List<TagVo> tags = tagService.findTagsByArticleId(articleId);
             articleVo.setTags(tags);
@@ -228,7 +241,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleVo.setAuthor(Objects.isNull(user) ? "defaultName" : user.getNickname());
         }
 
-        if(needBody) {
+        if (needBody) {
             Long articleId = article.getId();
             LambdaQueryWrapper<ArticleBody> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(ArticleBody::getArticleId, articleId);
@@ -236,7 +249,7 @@ public class ArticleServiceImpl implements ArticleService {
             ArticleBodyVo articleBodyVo = convert(articleBody);
             articleVo.setBody(articleBodyVo);
         }
-        if(needCategory) {
+        if (needCategory) {
             Long categoryId = article.getCategoryId();
             Category category = categoryService.findCategoryById(categoryId);
             CategoryVo categoryVo = new CategoryVo();
@@ -250,7 +263,7 @@ public class ArticleServiceImpl implements ArticleService {
                                         boolean needTags, boolean needAuthor,
                                         boolean needBody, boolean needCategory) {
         List<ArticleVo> articleVoList = new ArrayList<>();
-        if(articleList != null && !articleList.isEmpty()) {
+        if (articleList != null && !articleList.isEmpty()) {
             for (Article article : articleList) {
                 articleVoList.add(convert(article, needTags, needAuthor, needBody, needTags));
             }
