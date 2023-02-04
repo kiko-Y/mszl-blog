@@ -1,6 +1,7 @@
 package com.sjy.blog.service;
 
 import com.sjy.blog.vo.R;
+import com.sjy.blog.vo.params.ArticleParam;
 import com.sjy.blog.vo.params.PageParam;
 
 /**
@@ -19,4 +20,6 @@ public interface ArticleService {
     R findArticleById(Long id);
 
     Long getAuthorIdByArticleId(Long articleId);
+
+    R publishArticle(ArticleParam articleParam);
 }

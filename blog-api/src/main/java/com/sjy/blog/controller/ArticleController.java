@@ -2,6 +2,7 @@ package com.sjy.blog.controller;
 
 import com.sjy.blog.service.ArticleService;
 import com.sjy.blog.vo.R;
+import com.sjy.blog.vo.params.ArticleParam;
 import com.sjy.blog.vo.params.PageParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -50,4 +51,8 @@ public class ArticleController {
         return articleService.findArticleById(id);
     }
 
+    @PostMapping("/publish")
+    public R publishArticle(@RequestBody ArticleParam articleParam) {
+        return articleService.publishArticle(articleParam);
+    }
 }

@@ -1,6 +1,7 @@
 package com.sjy.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sjy.blog.dao.dos.Archive;
 import com.sjy.blog.dao.mapper.ArchiveMapper;
@@ -11,12 +12,16 @@ import com.sjy.blog.dao.pojo.ArticleBody;
 import com.sjy.blog.dao.pojo.Category;
 import com.sjy.blog.dao.pojo.SysUser;
 import com.sjy.blog.service.*;
+import com.sjy.blog.utils.UserThreadLocal;
 import com.sjy.blog.vo.*;
+import com.sjy.blog.vo.params.ArticleBodyParam;
+import com.sjy.blog.vo.params.ArticleParam;
 import com.sjy.blog.vo.params.PageParam;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +54,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ThreadService threadService;
+
 
 
     /**
@@ -126,6 +132,35 @@ public class ArticleServiceImpl implements ArticleService {
                 .select(Article::getAuthorId)
                 .last("limit 1");
         return articleMapper.selectOne(queryWrapper).getAuthorId();
+    }
+
+    @Override
+    @Transactional
+    public R publishArticle(ArticleParam articleParam) {
+        SysUser user = UserThreadLocal.get();
+        String title = articleParam.getTitle();
+        CategoryVo categoryVo = articleParam.getCategory();
+        Long categoryId = categoryVo.getId();
+        String summary = articleParam.getSummary();
+        List<TagVo> tags = articleParam.getTags();
+        ArticleBodyParam articleBodyParam = articleParam.getBody();
+        String content = articleBodyParam.getContent();
+        String contentHtml = articleBodyParam.getContentHtml();
+        Article article = new Article(null, title, summary, 0, 0, user.getId(),
+                null, categoryId, 0, System.currentTimeMillis());
+        articleMapper.insert(article);
+        Long articleId = article.getId();
+        ArticleBody articleBody = new ArticleBody(null, content, contentHtml, articleId);
+        articleBodyMapper.insert(articleBody);
+        Long articleBodyId = articleBody.getId();
+        LambdaUpdateWrapper<Article> updateWrap = new LambdaUpdateWrapper<>();
+        updateWrap.eq(Article::getId, articleId)
+                        .set(Article::getBodyId, articleBodyId);
+        articleMapper.update(null, updateWrap);
+
+        ArticleVo articleVo = new ArticleVo();
+        articleVo.setId(articleId);
+        return R.success(articleVo);
     }
 
     private ArchiveVo convert(Archive archive) {
