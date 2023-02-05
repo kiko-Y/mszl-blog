@@ -1,5 +1,7 @@
 package com.sjy.blog.controller;
 
+import com.sjy.blog.common.aop.Cache;
+import com.sjy.blog.common.aop.CacheClear;
 import com.sjy.blog.common.aop.LogAnnotation;
 import com.sjy.blog.service.ArticleService;
 import com.sjy.blog.vo.R;
@@ -27,17 +29,20 @@ public class ArticleController {
 
     @PostMapping
     @LogAnnotation(module = "文章", operate = "获取文章列表")
+    @Cache(expire = 5 * 60 * 1000, name = "listAllArticles")
     public R listAllArticles(@RequestBody PageParam pageParam) {
         return articleService.listAllArticles(pageParam);
     }
 
     @PostMapping("/hot")
+    @Cache(expire = 5 * 60 * 1000, name = "findHotArticles")
     public R findHotArticles() {
         int limit = 3;
         return articleService.findHotArticles(limit);
     }
 
     @PostMapping("/new")
+    @Cache(expire = 5 * 60 * 1000, name = "findNewArticles")
     public R findNewArticles() {
         int limit = 3;
         return articleService.findNewArticles(limit);
@@ -49,6 +54,7 @@ public class ArticleController {
     }
 
     @PostMapping("/view/{id}")
+    @CacheClear
     public R articleDetail(@PathVariable("id") Long id) {
         return articleService.findArticleById(id);
     }

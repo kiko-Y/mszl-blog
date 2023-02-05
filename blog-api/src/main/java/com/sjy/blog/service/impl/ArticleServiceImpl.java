@@ -165,7 +165,7 @@ public class ArticleServiceImpl implements ArticleService {
         SysUser user = UserThreadLocal.get();
         String title = articleParam.getTitle();
         CategoryVo categoryVo = articleParam.getCategory();
-        Long categoryId = categoryVo.getId();
+        Long categoryId = Long.parseLong(categoryVo.getId());
         String summary = articleParam.getSummary();
         List<TagVo> tags = articleParam.getTags();
         ArticleBodyParam articleBodyParam = articleParam.getBody();
@@ -191,12 +191,12 @@ public class ArticleServiceImpl implements ArticleService {
 
         if (tags != null) {
             for (TagVo tag : tags) {
-                articleTagService.save(new ArticleTag(null, articleId, tag.getId()));
+                articleTagService.save(new ArticleTag(null, articleId, Long.valueOf(tag.getId())));
             }
         }
 
         ArticleVo articleVo = new ArticleVo();
-        articleVo.setId(articleId);
+        articleVo.setId(String.valueOf(articleId));
         return R.success(articleVo);
     }
 
@@ -225,6 +225,9 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleVo convert(Article article, boolean needTags, boolean needAuthor, boolean needBody, boolean needCategory) {
         ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article, articleVo);
+        if(article.getId() != null) {
+            articleVo.setId(String.valueOf(article.getId()));
+        }
         if (Objects.nonNull(article.getCreateDate())) {
             articleVo.setCreateDate(new LocalDateTime(article.getCreateDate())
                     .toString("yyyy-MM-dd HH:mm"));
@@ -254,6 +257,9 @@ public class ArticleServiceImpl implements ArticleService {
             Category category = categoryService.findCategoryById(categoryId);
             CategoryVo categoryVo = new CategoryVo();
             BeanUtils.copyProperties(category, categoryVo);
+            if(category.getId() != null) {
+                categoryVo.setId(String.valueOf(category.getId()));
+            }
             articleVo.setCategory(categoryVo);
         }
         return articleVo;

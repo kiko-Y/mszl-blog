@@ -11,8 +11,9 @@ import lombok.Data;
 @Data
 public class LoginUserVo {
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    private Long id;
+    private String id;
 
     private String account;
 

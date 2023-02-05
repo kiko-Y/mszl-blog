@@ -55,6 +55,9 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryVo convert(Category category) {
         CategoryVo categoryVo = new CategoryVo();
         BeanUtils.copyProperties(category, categoryVo);
+        if(category.getId() != null) {
+            categoryVo.setId(String.valueOf(category.getId()));
+        }
         return categoryVo;
     }
 

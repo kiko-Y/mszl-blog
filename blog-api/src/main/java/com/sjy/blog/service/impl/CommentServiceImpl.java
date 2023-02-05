@@ -83,6 +83,9 @@ public class CommentServiceImpl implements CommentService {
     private CommentVo convert(Comment comment) {
         CommentVo commentVo = new CommentVo();
         BeanUtils.copyProperties(comment, commentVo);
+        if(comment.getId() != null) {
+            commentVo.setId(String.valueOf(comment.getId()));
+        }
         commentVo.setCreateDate(new LocalDateTime(comment.getCreateDate()).toString("yyyy-MM-dd HH:mm"));
         commentVo.setAuthor(convert(sysUserService.findSysUserById(comment.getAuthorId())));
         if(comment.getToUid() != null) {
@@ -108,6 +111,9 @@ public class CommentServiceImpl implements CommentService {
         }
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(user, userVo);
+        if(user.getId() != null) {
+            userVo.setId(String.valueOf(user.getId()));
+        }
         return userVo;
     }
 }

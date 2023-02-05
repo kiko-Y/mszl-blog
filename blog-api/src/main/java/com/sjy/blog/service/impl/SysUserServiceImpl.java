@@ -53,6 +53,9 @@ public class SysUserServiceImpl implements SysUserService {
         }
         LoginUserVo loginUserVo = new LoginUserVo();
         BeanUtils.copyProperties(user, loginUserVo);
+        if(user.getId() != null) {
+            loginUserVo.setId(String.valueOf(user.getId()));
+        }
         return R.success(loginUserVo);
     }
 

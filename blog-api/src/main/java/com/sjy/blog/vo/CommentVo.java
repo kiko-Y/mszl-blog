@@ -15,8 +15,10 @@ import java.util.List;
 public class CommentVo  {
 
     // 防止前端精度损失 把Id转为String
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    private Long id;
+
+    private String id;
 
     private String content;
 
